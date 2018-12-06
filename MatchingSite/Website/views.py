@@ -2,15 +2,13 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
 
 from .models import UserProfile
 
 def index(request):
-    #return HttpResponse("Hello, world. You're at the polls index.")
-    context = {
-    'UserProfile' : UserProfile
-    }
-    return render(request, 'Website/index.html', context)
+    response = redirect('/accounts/login/')
+    return response
 
 def register(request):
     if request.method == 'POST':
@@ -28,3 +26,10 @@ def register(request):
 
     context = {'form' : form}
     return render(request, 'registration/register.html', context)
+
+@login_required
+def home(request):
+    context = {
+        'UserProfile' : UserProfile
+    }
+    return render(request, 'Website/home.html', context)
