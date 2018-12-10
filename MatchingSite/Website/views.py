@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
-
+from .forms import RegisterForm
 from .models import UserProfile
 
 def index(request):
@@ -12,7 +12,7 @@ def index(request):
 
 def register(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = RegisterForm(request.POST)
 
         if form.is_valid():
             form.save()
@@ -22,7 +22,7 @@ def register(request):
             login(request, user)
             return redirect('index')
     else:
-        form = UserCreationForm()
+        form = RegisterForm()
 
     context = {'form' : form}
     return render(request, 'registration/register.html', context)
