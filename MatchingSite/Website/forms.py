@@ -8,12 +8,10 @@ import datetime
 
 
 class RegisterForm(UserCreationForm):
-    # declare the fields you will show
     username = forms.CharField(label="Your Username")
-    # first password field
     password1 = forms.CharField(label="Your Password", widget=forms.PasswordInput)
-    # confirm password field
     password2 = forms.CharField(label="Repeat Your Password", widget=forms.PasswordInput)
+    image = forms.ImageField(upload_to='PicFolder/')
     sex = forms.ChoiceField(choices=[("m","Male"),("f","Female")])
     dayRange = range(1,32)
     birthdate = forms.DateField(widget=SelectDateWidget(years=range(1900, 2100)))
@@ -24,9 +22,17 @@ class RegisterForm(UserCreationForm):
         ('running', 'Running'),
         ('cycling', 'Cycling'),
         ('gaming','Gaming'),
+        ('music', 'Music'),
+        ('hiking', 'Hiking'),
+        ('painting', 'Painting'),
+        ('dancing', 'Dancing'),
+        ('cooking', 'Cooking'),
+        ('photography', 'Photography'),
+        ('gardening', 'Gardening'),
+
     )
     hobbies = forms.MultipleChoiceField(
-        required=False,
+        required=True,
         widget=forms.CheckboxSelectMultiple,
         choices=HOBBY_CHOICES,
     )
@@ -78,6 +84,8 @@ class RegisterForm(UserCreationForm):
         user.sex = self.cleaned_data["sex"]
         user.birthdate = self.cleaned_data["birthdate"]
         user.hobbies = self.cleaned_data["hobbies"]
+        user.image = self.cleaned_data["image"]
+
         if commit:
             user.save()
         return user

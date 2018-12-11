@@ -12,7 +12,8 @@
     {% else %}
     <h2> You are not logged in.</h2>
   {% endif %}
-  <form action ="{% url 'logout' %}">
+  <form action ="{% url 'logout' %}" enctype="multipart/form-data">
+
     <p><input  style="height:50px;width:200px" type = "submit" value = "Logout"> </p>
   </form>
   </body>
