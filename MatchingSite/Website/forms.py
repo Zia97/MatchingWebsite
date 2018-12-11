@@ -20,6 +20,16 @@ class RegisterForm(UserCreationForm):
     email = forms.EmailField(label = "Email Address")
     first_name = forms.CharField(label = "Name")
     last_name = forms.CharField(label = "Surname")
+    HOBBY_CHOICES = (
+        ('running', 'Running'),
+        ('cycling', 'Cycling'),
+        ('gaming','Gaming'),
+    )
+    hobbies = forms.MultipleChoiceField(
+        required=False,
+        widget=forms.CheckboxSelectMultiple,
+        choices=HOBBY_CHOICES,
+    )
 
     def is_valid(self):
         return 1
@@ -67,6 +77,7 @@ class RegisterForm(UserCreationForm):
         user.last_name = self.cleaned_data["last_name"]
         user.sex = self.cleaned_data["sex"]
         user.birthdate = self.cleaned_data["birthdate"]
+        user.hobbies = self.cleaned_data["hobbies"]
         if commit:
             user.save()
         return user

@@ -12,4 +12,3 @@ class UserProfile(models.Model):
 
 class Hobbies(models.Model):
     hobby = models.CharField(max_length=200)
-    userProf = models.ManyToManyField('UserProfile')
