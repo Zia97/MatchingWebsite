@@ -11,7 +11,7 @@ class RegisterForm(UserCreationForm):
     username = forms.CharField(label="Your Username")
     password1 = forms.CharField(label="Your Password", widget=forms.PasswordInput)
     password2 = forms.CharField(label="Repeat Your Password", widget=forms.PasswordInput)
-    image = forms.ImageField(upload_to='PicFolder/')
+    image = forms.FileField(widget=forms.FileInput(attrs={'id':'image'}))
     sex = forms.ChoiceField(choices=[("m","Male"),("f","Female")])
     dayRange = range(1,32)
     birthdate = forms.DateField(widget=SelectDateWidget(years=range(1900, 2100)))

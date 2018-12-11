@@ -12,9 +12,10 @@ def index(request):
 
 def register(request):
     if request.method == 'POST':
-        form = RegisterForm(request.POST)
-
+        form = RegisterForm(request.POST, request.FILES)
+        print(form.errors)
         if form.is_valid():
+            form.image = request.FILES['image']
             form.save()
             username = form.cleaned_data['username']
             password = form.cleaned_data['password1']
