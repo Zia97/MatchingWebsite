@@ -13,36 +13,50 @@
   <h1> Home Page </h1>
   {% if user.is_authenticated %}
 
-    <h2> Your username is: {{ user.username }} </h2>
-    <h2> Your username is: {{ user.email }} </h2>
-    <h2> Your username is: {{ UserProfile.dob }} </h2>
-
     <script type="text/javascript">
     $(document).ready(function() {
+      $.ajax(
+        {
+          url: 'users',
+          type: 'get',
+          success: function(data) {
 
-      $.ajax({
-        url: 'products/',
-        type: 'get',
-        success: function(data) {
+            for (var i = 0; i < data.UserProfile.length; i++) {
+              var respId = data.UserProfile[i].id;
+              var username = data.UserProfile[i].username;
 
-          for (var i = 0; i < data.UserProfile.length; i++) {
-            var respId = data.UserProfile[i].id;
-            addEntry(respId, data.UserProfile[i].dob)
-          };
-
-        },
-        failure: function(data) {
-          alert('error');
+              if(username == '{{user.username}}')
+              {
+                console.log(respId);
+                addEntry(respId, data.UserProfile[i].username ,data.UserProfile[i].first_name, data.UserProfile[i].last_name, data.UserProfile[i].dob, data.UserProfile[i].email, data.UserProfile[i].gender, data.UserProfile[i].image, data.UserProfile[i].hobUser);
+              }
+            };
+          },
+          failure: function(data) {
+            alert('error');
+          }
         }
-      })
+      )
     })
   </script>
 
 <script type="text/javascript">
-  function addEntry(id, dob) {
+  function addEntry(id, username, first_name, last_name, dob, email, gender, image, hobbies) {
       $('#userInfo').append('<br/>')
 
-      $('#userInfo').append('<div id="userId' + id + '" ><h3> <ul><li>DOB TEST:' + dob)
+      $('#userInfo').append('<div id="userId' + id + '" ><h3> <ul><li>DOB:' + username + " " + first_name + " " + last_name + " " + dob + " " +email + " " + gender + " "+ image)
+
+      if(hobbies==null)
+      {
+        console.log("hobbies is null")
+      }
+
+      var keys = Object.keys(hobbies);
+
+      for (var i = 0, len = keys.length; i < len; i++)
+      {
+          $('#userInfo').append(keys[i])
+      }
     }
     </script>
 

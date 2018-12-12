@@ -31,6 +31,8 @@ def register(request):
             _dob = form.cleaned_data['birthdate']
             _image = form.cleaned_data['image']
             _hobbies = form.cleaned_data.get('hobbies')
+            for h in _hobbies:
+                print(h)
 
 
             _password = form.cleaned_data['password1']
@@ -46,6 +48,7 @@ def register(request):
                 newUserProfile.hobUser.add(hobby)
 
             newUserProfile.save()
+
             return redirect('index')
     else:
         form = RegisterForm()
@@ -63,4 +66,10 @@ def home(request):
 def users(request):
     if request.method == 'GET':
        newUserProfile = list(UserProfile.objects.values())
+       num = (UserProfile.hobUser  # M2M Manager
+               .through  # subjects_students through table
+               .objects  # through table manager
+               .filter(userprofile_id=4))
+       for n in num:
+           print(Hobby.objects.get(pk=n))
        return JsonResponse(dict(UserProfile=newUserProfile))
