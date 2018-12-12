@@ -12,32 +12,21 @@
 <body>
   <h1> Home Page </h1>
   {% if user.is_authenticated %}
-
   <img width="10%" height="10%" src="" id="profilepic"/>
 
     <script type="text/javascript">
     $(document).ready(function() {
       //THIS AJAX REQUEST GETS ALL THE USER DETAILS
-
-      var myId = 5;
-
       $.ajax(
         {
           url: 'users',
           type: 'get',
           success: function(data) {
-
-            console.log(data)
-
             addEntry(data.username ,data.first_name, data.last_name, data.dob, data.email, data.gender, data.image);
-
-
             for (j=0; j<data.hobUser.length; j++)
             {
               addHobby(data.hobUser[j].name + "<br>")
             }
-
-
           },
           failure: function(data) {
             alert('error');
@@ -48,34 +37,56 @@
     })
   </script>
 
+  <script type="text/javascript">
+  $(document).ready(function() {
+    $("#search").click(function() {
+      $.ajax(
+        {
+          url: 'allUsers',
+          type: 'get',
+          success: function(data) {
+            for(k=0; k<data.length; k++)
+            {
+              addEntry(data[k].username ,data[k].first_name, data[k].last_name, data[k].dob, data[k].email, data[k].gender, data[k].image);
+              for (i=0; i<data[k].hobUser.length; i++)
+              {
+                addHobby(data[k].hobUser[i].name + "<br>")
+              }
+            }
+          },
+          failure: function(data) {
+            alert('error');
+          }
+        }
+    )
+
+  });
+});
+</script>
+
 <script type="text/javascript">
   function addEntry(username, first_name, last_name, dob, email, gender, image) {
       $('#userInfo').append('<br/>')
-
       $('#userInfo').append('<div id="userId' + '" ><h3> <ul><li>DOB:' + username + " " + first_name + " " + last_name + " " + dob + " " +email + " " + gender)
       $('#profilepic').attr("src",image)
 
     }
-    </script>
+</script>
 
-    <script type="text/javascript">
-      function addHobby(name) {
-
-          $('#userInfo').append('<br/>')
-
-          $('#userInfo').append(name)
-
-        }
-        </script>
+<script type="text/javascript">
+  function addHobby(name) {
+    $('#userInfo').append('<br/>')
+    $('#userInfo').append(name)
+  }
+</script>
 
 
   <span id="userInfo" style="font-weight:bold">User Info</span>
-
     {% else %}
     <h2> You are not logged in.</h2>
   {% endif %}
+  <p><button id="search">Search</button> </p>
   <form action ="{% url 'logout' %}" enctype="multipart/form-data">
-
     <p><input  style="height:50px;width:200px" type = "submit" value = "Logout"> </p>
   </form>
   </body>

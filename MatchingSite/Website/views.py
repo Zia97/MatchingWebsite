@@ -64,30 +64,14 @@ def home(request):
     return render(request, 'Website/home.html', context)
 
 def users(request):
-
     if request.method == 'GET':
         userProfile = UserProfile.objects.get(username=request.user)
-       #newUserProfile = list(UserProfile.objects.values())
         userJson = userProfile.as_json()
-      #userProfile = UserProfile.objects.get(username=request.username)
-        print(userJson)
-    #return JsonResponse(dict(UserProfile=newUserProfile))
     return JsonResponse(userJson)
 
-
-
-def getHobbies(request, id):
-
-    print(id)
-
-    mydict = {}
-    num = (UserProfile.hobUser  # M2M Manager
-            .through  # subjects_students through table
-            .objects
-            .filter(userprofile_id=id))
-    for n in num:
-        id  = n.hobby_id
-        temp = Hobby.objects.get(id=n.hobby_id)
-        mydict[id] = temp
-
-    return JsonResponse(dict(mydict))
+def allUsers(request):
+    if request.method == 'GET':
+        users = UserProfile.objects.all()
+        resultsJson = [UserProfile.as_json() for UserProfile in users]
+        # usersJson = users.as_json()
+    return JsonResponse(resultsJson, safe=False);
