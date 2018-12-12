@@ -70,8 +70,23 @@ def users(request):
     return JsonResponse(userJson)
 
 def allUsers(request):
+    currDict = {}
+    allDict = {}
+    result = {}
     if request.method == 'GET':
-        users = UserProfile.objects.all()
+        currentUser = UserProfile.objects.all().filter(username=request.user)
+        currentUserJson = [UserProfile.as_json() for UserProfile in currentUser]
+        for currUser in currentUserJson:
+            print(currUser.get('hobUser'))
+            currDict = currUser.get('hobUser')
+            for entry in currDict:
+                result.update(entry.values())
+        print(result)
+        users = UserProfile.objects.all().exclude(username=request.user)
         resultsJson = [UserProfile.as_json() for UserProfile in users]
-        # usersJson = users.as_json()
+        for user in resultsJson:
+            print(user.get('hobUser'))
+            allDict = user.get('hobUser')
+        # shared_items = {k: currUser[k] for k in currUser if k in allDict and currUser[k] == allDict[k]}
+        # print(shared_items)
     return JsonResponse(resultsJson, safe=False);

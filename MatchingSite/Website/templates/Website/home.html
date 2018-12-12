@@ -12,7 +12,7 @@
 <body>
   <h1> Home Page </h1>
   {% if user.is_authenticated %}
-  <img width="10%" height="10%" src="" id="profilepic"/>
+  <!-- <img width="10%" height="10%" src="" id="profilepic"/> -->
 
     <script type="text/javascript">
     $(document).ready(function() {
@@ -47,19 +47,19 @@
           success: function(data) {
             for(k=0; k<data.length; k++)
             {
-              addEntry(data[k].username ,data[k].first_name, data[k].last_name, data[k].dob, data[k].email, data[k].gender, data[k].image);
+              addEntry(data[k].username, data[k].first_name, data[k].last_name, data[k].dob, data[k].email, data[k].gender, data[k].image);
               for (i=0; i<data[k].hobUser.length; i++)
               {
                 addHobby(data[k].hobUser[i].name + "<br>")
               }
             }
+            $("#search").remove();
           },
           failure: function(data) {
             alert('error');
           }
         }
     )
-
   });
 });
 </script>
@@ -67,9 +67,12 @@
 <script type="text/javascript">
   function addEntry(username, first_name, last_name, dob, email, gender, image) {
       $('#userInfo').append('<br/>')
-      $('#userInfo').append('<div id="userId' + '" ><h3> <ul><li>DOB:' + username + " " + first_name + " " + last_name + " " + dob + " " +email + " " + gender)
-      $('#profilepic').attr("src",image)
-
+      var img = document.createElement('img');
+      img.setAttribute('src', image);
+      img.setAttribute('height', '10%');
+      img.setAttribute('width', '10%');
+      $('#userInfo').append(document.getElementsByTagName('body')[0].appendChild(img))
+      $('#userInfo').append('<div id="userId' + '" ><h3> <ul><li>' + username + "<br/ >" + first_name + " " + last_name + "<br/ >" + dob + "<br/ >" +email + "<br/ >" + gender)
     }
 </script>
 
