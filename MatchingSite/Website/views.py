@@ -4,11 +4,16 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from .forms import RegisterForm
-from .models import UserProfile
+from .models import UserProfile, Hobby
 
 def index(request):
     response = redirect('/accounts/login/')
     return response
+
+# def addHobbies(self, hobbies):
+#     for h in hobbies:
+#         self.hobUser.add(Hobby.objects.get(id=h))
+
 
 def register(request):
     if request.method == 'POST':
@@ -17,10 +22,29 @@ def register(request):
         if form.is_valid():
             form.image = request.FILES['image']
             form.save()
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password1']
-            user = authenticate(username=username, password=password)
+            _first_name = form.cleaned_data['first_name']
+            _last_name = form.cleaned_data['last_name']
+            _username = form.cleaned_data['username']
+            _email = form.cleaned_data['email']
+            _gender = form.cleaned_data['sex']
+            _dob = form.cleaned_data['birthdate']
+            _image = form.cleaned_data['image']
+            _hobbies = form.cleaned_data.get('hobbies')
+
+
+            _password = form.cleaned_data['password1']
+
+            user = authenticate(username=_username, password=_password)
             login(request, user)
+
+            newUserProfile = UserProfile(first_name=_first_name,last_name=_last_name,username=_username,email=_email,gender=_gender,dob=_dob,image=_image)
+            newUserProfile.save()
+
+            for h in _hobbies:
+                hobby = Hobby.objects.get(name=h)
+                newUserProfile.hobUser.add(hobby)
+
+            newUserProfile.save()
             return redirect('index')
     else:
         form = RegisterForm()

@@ -19,16 +19,16 @@ class RegisterForm(UserCreationForm):
     first_name = forms.CharField(label = "Name")
     last_name = forms.CharField(label = "Surname")
     HOBBY_CHOICES = (
-        ('running', 'Running'),
-        ('cycling', 'Cycling'),
-        ('gaming','Gaming'),
-        ('music', 'Music'),
-        ('hiking', 'Hiking'),
-        ('painting', 'Painting'),
-        ('dancing', 'Dancing'),
-        ('cooking', 'Cooking'),
-        ('photography', 'Photography'),
-        ('gardening', 'Gardening'),
+        ('Running', 'Running'),
+        ('Cycling', 'Cycling'),
+        ('Gaming','Gaming'),
+        ('Music', 'Music'),
+        ('Hiking', 'Hiking'),
+        ('Painting', 'Painting'),
+        ('Dancing', 'Dancing'),
+        ('Cooking', 'Cooking'),
+        ('Photography', 'Photography'),
+        ('Gardening', 'Gardening'),
 
     )
     hobbies = forms.MultipleChoiceField(
