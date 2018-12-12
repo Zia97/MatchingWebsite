@@ -63,13 +63,13 @@ def home(request):
     }
     return render(request, 'Website/home.html', context)
 
-def users(request, pkId):
+def users(request):
     if request.method == 'GET':
        newUserProfile = list(UserProfile.objects.values())
        num = (UserProfile.hobUser  # M2M Manager
                .through  # subjects_students through table
                .objects  # through table manager
-               .filter(userprofile_id=pkId))
+               .filter(userprofile_id=5)) #5 is random test value should be pkID
        for n in num:
            print(n.hobby_id)
        return JsonResponse(dict(UserProfile=newUserProfile))
