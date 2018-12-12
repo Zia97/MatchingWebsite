@@ -3,12 +3,82 @@
 <head>
   <meta charset="utf-8">
 
+  <script type='text/javascript' src='http://code.jquery.com/jquery-1.8.2.js'></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+
 </head>
 
 <body>
   <h1> Home Page </h1>
   {% if user.is_authenticated %}
+
     <h2> Your username is: {{ user.username }} </h2>
+    <h2> Your username is: {{ user.email }} </h2>
+    <h2> Your username is: {{ UserProfile.dob }} </h2>
+
+    <script type="text/javascript">
+    $(document).ready(function() {
+
+      $.ajax({
+        url: 'products/',
+        type: 'get',
+        success: function(data) {
+
+          for (var i = 0; i < data.UserProfile.length; i++) {
+            var respId = data.UserProfile[i].id;
+            addEntry(respId, data.UserProfile[i].dob)
+          };
+
+        },
+        failure: function(data) {
+          alert('error');
+        }
+      })
+    })
+  </script>
+
+<script type="text/javascript">
+  function addEntry(id, dob) {
+      $('#userInfo').append('<br/>')
+
+      $('#userInfo').append('<div id="userId' + id + '" ><h3> <ul><li>DOB TEST:' + dob)
+    }
+    </script>
+
+
+  <!-- <script type="text/javascript">
+  function addProduct() {
+
+      //var productPrice = document.getElementById('pricefieldform').value
+      //var productName = document.getElementById('namefieldform').value
+      var productDescription = document.getElementById('descriptionfieldform').value
+
+      $.ajax({
+        type: 'POST',
+        url: 'product/',
+        data: {
+          "name": productName,
+          "price": productPrice,
+          "description": productDescription
+
+        },
+        dataType: 'json',
+        success: function(response) {
+
+          var respId = response.id;
+          addEntry(respId, response.name, response.description, response.price);
+
+        },
+        error: function(reg, status, error) {
+          alert(status.text);
+        }
+      });
+    }
+  </script> -->
+
+  <span id="userInfo" style="font-weight:bold">User Info</span>
+
     {% else %}
     <h2> You are not logged in.</h2>
   {% endif %}

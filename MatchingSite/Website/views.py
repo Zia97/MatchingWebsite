@@ -5,14 +5,15 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from .forms import RegisterForm
 from .models import UserProfile, Hobby
+from django.template import loader
+from django.http import *
+from django.shortcuts import render_to_response
+from django.template import RequestContext
+import socket
 
 def index(request):
     response = redirect('/accounts/login/')
     return response
-
-# def addHobbies(self, hobbies):
-#     for h in hobbies:
-#         self.hobUser.add(Hobby.objects.get(id=h))
 
 
 def register(request):
@@ -58,3 +59,8 @@ def home(request):
         'UserProfile' : UserProfile
     }
     return render(request, 'Website/home.html', context)
+
+def users(request):
+    if request.method == 'GET':
+       newUserProfile = list(UserProfile.objects.values())
+       return JsonResponse(dict(UserProfile=newUserProfile))
