@@ -7,6 +7,11 @@ class Hobby(models.Model):
     def __str__(self):
         return self.name
 
+    def as_json(self):
+        return {'name': self.name}
+
+
+
 class UserProfile(models.Model):
     first_name = models.CharField(max_length=200)
     last_name = models.CharField(max_length=200)
@@ -16,3 +21,20 @@ class UserProfile(models.Model):
     dob = models.DateField()
     hobUser = models.ManyToManyField(Hobby)
     image = models.ImageField(upload_to='PicFolder/')
+
+
+    def __str__(self):
+        return self.username
+
+
+    def as_json(self):
+        return dict(
+                username=self.username,
+                first_name = self.first_name,
+                last_name = self.last_name,
+                email=self.email,
+                gender=self.gender,
+                dob=self.dob,
+                image=self.image.url,
+                hobUser=[h.as_json() for h in self.hobUser.all()],
+                )

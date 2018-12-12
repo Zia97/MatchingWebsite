@@ -13,76 +13,61 @@
   <h1> Home Page </h1>
   {% if user.is_authenticated %}
 
+  <img width="10%" height="10%" src="" id="profilepic"/>
+
     <script type="text/javascript">
     $(document).ready(function() {
+      //THIS AJAX REQUEST GETS ALL THE USER DETAILS
+
+      var myId = 5;
+
       $.ajax(
         {
           url: 'users',
           type: 'get',
           success: function(data) {
 
-            for (var i = 0; i < data.UserProfile.length; i++) {
-              var respId = data.UserProfile[i].id;
-              var username = data.UserProfile[i].username;
+            console.log(data)
 
-              if(username == '{{user.username}}')
-              {
-                console.log(respId);
-                addEntry(respId, data.UserProfile[i].username ,data.UserProfile[i].first_name, data.UserProfile[i].last_name, data.UserProfile[i].dob, data.UserProfile[i].email, data.UserProfile[i].gender, data.UserProfile[i].image, data.UserProfile[i].hobUser);
-              }
-            };
+            addEntry(data.username ,data.first_name, data.last_name, data.dob, data.email, data.gender, data.image);
+
+
+            for (j=0; j<data.hobUser.length; j++)
+            {
+              addHobby(data.hobUser[j].name + "<br>")
+            }
+
+
           },
           failure: function(data) {
             alert('error');
           }
         }
       )
+
     })
   </script>
 
 <script type="text/javascript">
-  function addEntry(id, username, first_name, last_name, dob, email, gender, image, hobbies) {
+  function addEntry(username, first_name, last_name, dob, email, gender, image) {
       $('#userInfo').append('<br/>')
 
-      $('#userInfo').append('<div id="userId' + id + '" ><h3> <ul><li>DOB:' + username + " " + first_name + " " + last_name + " " + dob + " " +email + " " + gender + " "+ image)
+      $('#userInfo').append('<div id="userId' + '" ><h3> <ul><li>DOB:' + username + " " + first_name + " " + last_name + " " + dob + " " +email + " " + gender)
+      $('#profilepic').attr("src",image)
 
-      if(hobbies==null)
-      {
-        console.log("hobbies is null")
-      }
     }
     </script>
 
+    <script type="text/javascript">
+      function addHobby(name) {
 
-  <!-- <script type="text/javascript">
-  function addProduct() {
+          $('#userInfo').append('<br/>')
 
-      //var productPrice = document.getElementById('pricefieldform').value
-      //var productName = document.getElementById('namefieldform').value
-      var productDescription = document.getElementById('descriptionfieldform').value
+          $('#userInfo').append(name)
 
-      $.ajax({
-        type: 'POST',
-        url: 'product/',
-        data: {
-          "name": productName,
-          "price": productPrice,
-          "description": productDescription
-
-        },
-        dataType: 'json',
-        success: function(response) {
-
-          var respId = response.id;
-          addEntry(respId, response.name, response.description, response.price);
-
-        },
-        error: function(reg, status, error) {
-          alert(status.text);
         }
-      });
-    }
-  </script> -->
+        </script>
+
 
   <span id="userInfo" style="font-weight:bold">User Info</span>
 

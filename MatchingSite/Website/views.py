@@ -64,12 +64,30 @@ def home(request):
     return render(request, 'Website/home.html', context)
 
 def users(request):
+
     if request.method == 'GET':
-       newUserProfile = list(UserProfile.objects.values())
-       num = (UserProfile.hobUser  # M2M Manager
-               .through  # subjects_students through table
-               .objects  # through table manager
-               .filter(userprofile_id=5)) #5 is random test value should be pkID
-       for n in num:
-           print(n.hobby_id)
-       return JsonResponse(dict(UserProfile=newUserProfile))
+        userProfile = UserProfile.objects.get(username=request.user)
+       #newUserProfile = list(UserProfile.objects.values())
+        userJson = userProfile.as_json()
+      #userProfile = UserProfile.objects.get(username=request.username)
+        print(userJson)
+    #return JsonResponse(dict(UserProfile=newUserProfile))
+    return JsonResponse(userJson)
+
+
+
+def getHobbies(request, id):
+
+    print(id)
+
+    mydict = {}
+    num = (UserProfile.hobUser  # M2M Manager
+            .through  # subjects_students through table
+            .objects
+            .filter(userprofile_id=id))
+    for n in num:
+        id  = n.hobby_id
+        temp = Hobby.objects.get(id=n.hobby_id)
+        mydict[id] = temp
+
+    return JsonResponse(dict(mydict))
