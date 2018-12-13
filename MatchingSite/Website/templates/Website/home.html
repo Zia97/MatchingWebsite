@@ -57,9 +57,9 @@
                 addHobby(isCurr, data[k].hobUser[i].name + "<br>")
               }
             }
-            // $("#search").remove();
-            // $("#ageFilter").remove();
-            // $("#genderFilter").remove();
+            $('#userInfo').append($("#ageFilter"))
+            $('#userInfo').append($("#genderFilter"))
+            $('#userInfo').append($("#search"))
           },
           failure: function(data) {
             alert('error');
@@ -116,8 +116,7 @@
     {% else %}
     <h2> You are not logged in.</h2>
   {% endif %}
-  <p><button id="search">Search</button> </p>
-  <select id = "ageFilter">
+  <p><select id = "ageFilter">
     <option value = "0">Select Age Range</option>
     <option value = "1">18-30</option>
     <option value = "2">31-40</option>
@@ -129,7 +128,8 @@
     <option value = "e">Select Gender</option>
     <option value = "m">Male</option>
     <option value = "f">Female</option>
-  </select>
+  </select> </p>
+  <p><button id="search">Search</button> </p>
   <form action ="{% url 'logout' %}" enctype="multipart/form-data">
     <p><input  style="height:50px;width:200px" type = "submit" value = "Logout"> </p>
   </form>
