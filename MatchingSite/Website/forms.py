@@ -14,7 +14,7 @@ class RegisterForm(UserCreationForm):
     image = forms.FileField(widget=forms.FileInput(attrs={'id':'image'}))
     sex = forms.ChoiceField(choices=[("m","Male"),("f","Female")])
     dayRange = range(1,32)
-    birthdate = forms.DateField(widget=SelectDateWidget(years=range(1900, 2100)))
+    birthdate = forms.DateField(widget=SelectDateWidget(years=range(1900, 2010)))
     email = forms.EmailField(label = "Email Address")
     first_name = forms.CharField(label = "Name")
     last_name = forms.CharField(label = "Surname")

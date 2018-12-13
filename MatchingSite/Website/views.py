@@ -70,23 +70,31 @@ def users(request):
     return JsonResponse(userJson)
 
 def allUsers(request):
-    currDict = {}
-    allDict = {}
-    result = {}
-    if request.method == 'GET':
-        currentUser = UserProfile.objects.all().filter(username=request.user)
-        currentUserJson = [UserProfile.as_json() for UserProfile in currentUser]
-        for currUser in currentUserJson:
-            print(currUser.get('hobUser'))
-            currDict = currUser.get('hobUser')
-            for entry in currDict:
-                result.update(entry.values())
-        print(result)
-        users = UserProfile.objects.all().exclude(username=request.user)
-        resultsJson = [UserProfile.as_json() for UserProfile in users]
-        for user in resultsJson:
-            print(user.get('hobUser'))
-            allDict = user.get('hobUser')
-        # shared_items = {k: currUser[k] for k in currUser if k in allDict and currUser[k] == allDict[k]}
-        # print(shared_items)
+    currentUser = UserProfile.objects.get(username=request.user)
+    restUsers = UserProfile.objects.all().exclude(username=request.user)
+    count = 0;
+    pos = [0];
+    usersArr = [""];
+    i = 0;
+    for rUser in restUsers:
+        usersArr[i] = rUser.id
+        count = count + 1;
+        for cUser in currentUser.hobUser.all():
+            for user in rUser.hobUser.all():
+                if(cUser == user):
+                    pos[i] = pos[i] + 1;
+                else:
+                    pos[i] = pos[i] + 0;
+        if(count != len(restUsers)): #gone through already
+            i = i + 1;
+            pos.append(0)
+            usersArr.append("")
+
+    pos, usersArr = zip(*sorted(zip(pos, usersArr), reverse=True))
+    pos, usersArr = (list(t) for t in zip(*sorted(zip(pos, usersArr),reverse=True)))
+
+    rankedUsers = []
+    for selectedUser in usersArr:
+        rankedUsers.append(UserProfile.objects.get(id=selectedUser))
+    resultsJson = [UserProfile.as_json() for UserProfile in rankedUsers]
     return JsonResponse(resultsJson, safe=False);
