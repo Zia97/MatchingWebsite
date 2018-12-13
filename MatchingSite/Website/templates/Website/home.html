@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <script type='text/javascript' src='http://code.jquery.com/jquery-1.8.2.js'></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+
+</head>
+
+<body>
+  <h1> Home Page </h1>
+  {% if user.is_authenticated %}
+  <!-- <img width="10%" height="10%" src="" id="profilepic"/> -->
+
+    <script type="text/javascript">
+    $(document).ready(function() {
+      //THIS AJAX REQUEST GETS ALL THE USER DETAILS
+      $.ajax(
+        {
+          url: 'users',
+          type: 'get',
+          success: function(data) {
+            addEntry(data.username ,data.first_name, data.last_name, data.dob, data.email, data.gender, data.image);
+            for (j=0; j<data.hobUser.length; j++)
+            {
+              addHobby(data.hobUser[j].name + "<br>")
+            }
+          },
+          failure: function(data) {
+            alert('error');
+          }
+        }
+      )
+
+    })
+  </script>
+
+  <script type="text/javascript">
+  $(document).ready(function() {
+    $("#search").click(function() {
+      $.ajax(
+        {
+          url: 'allUsers/',
+          type: 'get',
+          data: {'ageFilt' : $("#ageFilter").children("option:selected").val(), 'genderFilt' :  $("#genderFilter").children("option:selected").val()},
+          success: function(data) {
+            for(k=0; k<data.length; k++)
+            {
+              addEntry(data[k].username, data[k].first_name, data[k].last_name, data[k].dob, data[k].email, data[k].gender, data[k].image);
+              for (i=0; i<data[k].hobUser.length; i++)
+              {
+                addHobby(data[k].hobUser[i].name + "<br>")
+              }
+            }
+            $("#search").remove();
+            $("#ageFilter").remove();
+            $("#genderFilter").remove();
+          },
+          failure: function(data) {
+            alert('error');
+          }
+        }
+    )
+  });
+});
+</script>
+
+<script type="text/javascript">
+  function addEntry(username, first_name, last_name, dob, email, gender, image) {
+      $('#userInfo').append('<br/>')
+      var img = document.createElement('img');
+      img.setAttribute('src', image);
+      img.setAttribute('height', '10%');
+      img.setAttribute('width', '10%');
+      $('#userInfo').append(document.getElementsByTagName('body')[0].appendChild(img))
+      $('#userInfo').append('<div id="userId' + '" ><h3> <ul><li>' + username + "<br/ >" + first_name + " " + last_name + "<br/ >" + dob + "<br/ >" +email + "<br/ >" + gender)
+    }
+</script>
+
+<script type="text/javascript">
+  function addHobby(name) {
+    $('#userInfo').append('<br/>')
+    $('#userInfo').append(name)
+  }
+</script>
+
+
+  <span id="userInfo" style="font-weight:bold">User Info</span>
+    {% else %}
+    <h2> You are not logged in.</h2>
+  {% endif %}
+  <p><button id="search">Search</button> </p>
+  <select id = "ageFilter">
+    <option value = "0">Select Age Range</option>
+    <option value = "1">18-30</option>
+    <option value = "2">31-40</option>
+    <option value = "3">41-50</option>
+    <option value = "4">51-60</option>
+    <option value = "5">61+</option>
+  </select>
+  <select id = "genderFilter">
+    <option value = "e">Select Gender</option>
+    <option value = "m">Male</option>
+    <option value = "f">Female</option>
+  </select>
+  <form action ="{% url 'logout' %}" enctype="multipart/form-data">
+    <p><input  style="height:50px;width:200px" type = "submit" value = "Logout"> </p>
+  </form>
+  </body>
+</html>
