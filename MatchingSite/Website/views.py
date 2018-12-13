@@ -10,6 +10,9 @@ from django.http import *
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 import socket
+import operator
+import collections
+from collections import OrderedDict
 
 def index(request):
     response = redirect('/accounts/login/')
@@ -56,6 +59,8 @@ def register(request):
     context = {'form' : form}
     return render(request, 'registration/register.html', context)
 
+
+
 @login_required
 def home(request):
     context = {
@@ -69,24 +74,66 @@ def users(request):
         userJson = userProfile.as_json()
     return JsonResponse(userJson)
 
+def sorter(data):
+    return sorted(data.items(), key=lambda kv: kv[1], reverse=True)
+
 def allUsers(request):
     currDict = {}
     allDict = {}
-    result = {}
+    currresult = []
+    newres = {}
+    usersdict = {}
+
     if request.method == 'GET':
         currentUser = UserProfile.objects.all().filter(username=request.user)
         currentUserJson = [UserProfile.as_json() for UserProfile in currentUser]
         for currUser in currentUserJson:
-            print(currUser.get('hobUser'))
             currDict = currUser.get('hobUser')
             for entry in currDict:
-                result.update(entry.values())
-        print(result)
+                names=[]
+                v = list(entry.values())
+                {names[i]:v[i] for i in range(len(names))}
+                currresult.append(v[0])
+
         users = UserProfile.objects.all().exclude(username=request.user)
+        print(type(users))
         resultsJson = [UserProfile.as_json() for UserProfile in users]
+        counter =0
         for user in resultsJson:
-            print(user.get('hobUser'))
+            tempresult = []
             allDict = user.get('hobUser')
-        # shared_items = {k: currUser[k] for k in currUser if k in allDict and currUser[k] == allDict[k]}
-        # print(shared_items)
-    return JsonResponse(resultsJson, safe=False);
+            usersdict[counter] = user
+
+            for entry in allDict:
+                names=[]
+                v = list(entry.values())
+                {names[i]:v[i] for i in range(len(names))}
+                tempresult.append(v[0])
+            # print(currresult)
+            # print("@@@@@")
+            # print(tempresult)
+            s = set(currresult).intersection(tempresult)
+            # print(len(s))
+            newres[counter] = len(s)
+            counter = counter+1
+            #newres['tempresult'+str(counter)] = len(s)
+
+            ##print("-----------------------")
+
+        templist =[]
+        testing = sorted(newres.items(), key=lambda x: x[1], reverse=True)
+        mylist = [i[0] for i in testing]
+
+        #print(mylist)
+
+        finallist = []
+
+        for num in mylist:
+            finallist.append(usersdict[num])
+
+        print(type(finallist))
+        print(finallist)
+        #resultsJson = [UserProfile.as_json() for UserProfile in finallist]
+
+    return JsonResponse(finallist, safe=False)
+    #return JsonResponse(resultsJson, safe=False);
