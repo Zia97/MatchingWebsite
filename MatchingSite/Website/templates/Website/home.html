@@ -46,6 +46,7 @@
           type: 'get',
           data: {'ageFilt' : $("#ageFilter").children("option:selected").val(), 'genderFilt' :  $("#genderFilter").children("option:selected").val()},
           success: function(data) {
+
             isCurr = false;
             $('#matchInfo').empty();
             for(k=0; k<data.length; k++)
@@ -73,12 +74,13 @@
 <script type="text/javascript">
 function likeProfile()
 {
+
   var user = $(this).attr("id");
   $.ajax(
     {
       url: 'like/',
       type: 'post',
-      data: {'user' : user, 'csrfmiddlewaretoken' : $('input[name=csrfmiddlewaretoken]').val()},
+      data: {'user' : user, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
       success: function(data) {
         if(data == 'Already Liked')
         {
