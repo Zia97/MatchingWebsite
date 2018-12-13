@@ -12,30 +12,29 @@
 <body>
   <h1> Home Page </h1>
   {% if user.is_authenticated %}
-  <!-- <img width="10%" height="10%" src="" id="profilepic"/> -->
 
-    <script type="text/javascript">
-    $(document).ready(function() {
-      //THIS AJAX REQUEST GETS ALL THE USER DETAILS
-      $.ajax(
-        {
-          url: 'users',
-          type: 'get',
-          success: function(data) {
-            isCurr = true;
-            addEntry(isCurr, data.username ,data.first_name, data.last_name, data.dob, data.email, data.gender, data.image);
-            for (j=0; j<data.hobUser.length; j++)
-            {
-              addHobby(isCurr, data.hobUser[j].name + "<br>")
-            }
-          },
-          failure: function(data) {
-            alert('error');
+  <script type="text/javascript">
+  $(document).ready(function() {
+    //THIS AJAX REQUEST GETS ALL THE USER DETAILS
+    $.ajax(
+      {
+        url: 'users',
+        type: 'get',
+        success: function(data) {
+          isCurr = true;
+          addEntry(isCurr, data.username ,data.first_name, data.last_name, data.dob, data.email, data.gender, data.image, data.likeCount);
+          for (j=0; j<data.hobUser.length; j++)
+          {
+            addHobby(isCurr, data.hobUser[j].name + "<br>")
           }
+        },
+        failure: function(data) {
+          alert('error');
         }
-      )
+      }
+    )
 
-    })
+  })
   </script>
 
   <script type="text/javascript">
@@ -51,7 +50,7 @@
             $('#matchInfo').empty();
             for(k=0; k<data.length; k++)
             {
-              addEntry(isCurr, data[k].username, data[k].first_name, data[k].last_name, data[k].dob, data[k].email, data[k].gender, data[k].image);
+              addEntry(isCurr, data[k].username, data[k].first_name, data[k].last_name, data[k].dob, data[k].email, data[k].gender, data[k].image, data[k].likeCount);
               for (i=0; i<data[k].hobUser.length; i++)
               {
                 addHobby(isCurr, data[k].hobUser[i].name + "<br>")
@@ -60,78 +59,108 @@
             $('#userInfo').append($("#ageFilter"))
             $('#userInfo').append($("#genderFilter"))
             $('#userInfo').append($("#search"))
+            $('.likeBut').click(likeProfile)
           },
           failure: function(data) {
             alert('error');
           }
         }
-    )
+      )
+    });
   });
-});
 </script>
 
 <script type="text/javascript">
-  function addEntry(isCurr, username, first_name, last_name, dob, email, gender, image) {
-      if(isCurr==true)
-      {
-        $('#userInfo').append('<br/>')
-        var img = document.createElement('img');
-        img.setAttribute('src', image);
-        img.setAttribute('height', '10%');
-        img.setAttribute('width', '10%');
-        $('#userInfo').append(document.getElementsByTagName('body')[0].appendChild(img))
-        $('#userInfo').append('<div id="userId' + '" ><h3> <ul><li>' + username + "<br/ >" + first_name + " " + last_name + "<br/ >" + dob + "<br/ >" +email + "<br/ >" + gender)
+function likeProfile()
+{
+  var user = $(this).attr("id");
+  $.ajax(
+    {
+      url: 'like/',
+      type: 'post',
+      data: {'user' : user, 'csrfmiddlewaretoken' : $('input[name=csrfmiddlewaretoken]').val()},
+      success: function(data) {
+        if(data == 'Already Liked')
+        {
+          alert("Already Liked")
+        }
+        else
+        {
+          $('#likeCount' + user).html(data)
+        }
+      },
+      failure: function(data) {
+        alert('error');
       }
-      else
-      {
-        $('#matchInfo').append('<br/>')
-        var img = document.createElement('img');
-        img.setAttribute('src', image);
-        img.setAttribute('height', '10%');
-        img.setAttribute('width', '10%');
-        $('#matchInfo').append(document.getElementsByTagName('body')[0].appendChild(img))
-        $('#matchInfo').append('<div id="userId' + '" ><h3> <ul><li>' + username + "<br/ >" + first_name + " " + last_name + "<br/ >" + dob + "<br/ >" +email + "<br/ >" + gender)
-      }
-    }
-</script>
+    });
+}
 
-<script type="text/javascript">
-  function addHobby(isCurr, name) {
-    if(isCurr==true)
-    {
-      $('#userInfo').append('<br/>')
-      $('#userInfo').append(name)
-    }
-    else
-    {
-      $('#matchInfo').append('<br/>')
-      $('#matchInfo').append(name)
-    }
+function addEntry(isCurr, username, first_name, last_name, dob, email, gender, image, likeCount) {
+  if(isCurr==true)
+  {
+    $('#userInfo').append('<br/>')
+    var img = document.createElement('img');
+    img.setAttribute('src', image);
+    img.setAttribute('height', '10%');
+    img.setAttribute('width', '10%');
+    $('#userInfo').append(document.getElementsByTagName('body')[0].appendChild(img))
+    $('#userInfo').append('<div id="userId' + '" ><h3> <ul><li>' + username + "<br/ >" + first_name + " " + last_name + "<br/ >" + dob + "<br/ >" +email + "<br/ >" + gender)
+    $('#userInfo').append("<p id = likeCount" + username +">" + likeCount + "</p>")
   }
+  else
+  {
+    $('#matchInfo').append('<br/>')
+    var img = document.createElement('img');
+    img.setAttribute('src', image);
+    img.setAttribute('height', '10%');
+    img.setAttribute('width', '10%');
+    $('#matchInfo').append(document.getElementsByTagName('body')[0].appendChild(img))
+    $('#matchInfo').append('<div id="userId' + '" ><h3> <ul><li>' + username + "<br/ >" + first_name + " " + last_name + "<br/ >" + dob + "<br/ >" +email + "<br/ >" + gender)
+    $('#matchInfo').append('<button id = ' + username + ' type="submit" class="likeBut">Like</button>')
+    $('#matchInfo').append("<p id = likeCount" + username +">" + likeCount + "</p>")
+  }
+}
 </script>
 
+<script type="text/javascript">
+function addHobby(isCurr, name) {
+  if(isCurr==true)
+  {
+    $('#userInfo').append('<br/>')
+    $('#userInfo').append(name)
+  }
+  else
+  {
+    $('#matchInfo').append('<br/>')
+    $('#matchInfo').append(name)
+  }
+}
+</script>
 
-  <span id="userInfo" style="font-weight:bold">User Info</span>
-  <span id="matchInfo" style="font-weight:bold"> </span>
-    {% else %}
-    <h2> You are not logged in.</h2>
-  {% endif %}
-  <p><select id = "ageFilter">
-    <option value = "0">Select Age Range</option>
-    <option value = "1">18-30</option>
-    <option value = "2">31-40</option>
-    <option value = "3">41-50</option>
-    <option value = "4">51-60</option>
-    <option value = "5">61+</option>
-  </select>
-  <select id = "genderFilter">
-    <option value = "e">Select Gender</option>
-    <option value = "m">Male</option>
-    <option value = "f">Female</option>
-  </select> </p>
-  <p><button id="search">Search</button> </p>
-  <form action ="{% url 'logout' %}" enctype="multipart/form-data">
-    <p><input  style="height:50px;width:200px" type = "submit" value = "Logout"> </p>
-  </form>
-  </body>
+<span id="userInfo" style="font-weight:bold">User Info</span>
+<span id="matchInfo" style="font-weight:bold"> </span>
+{% else %}
+<h2> You are not logged in.</h2>
+{% endif %}
+<!-- <form role='form' method='post'>
+{% csrf_token %} -->
+<p><select id = "ageFilter">
+  <option value = "0">Select Age Range</option>
+  <option value = "1">18-30</option>
+  <option value = "2">31-40</option>
+  <option value = "3">41-50</option>
+  <option value = "4">51-60</option>
+  <option value = "5">61+</option>
+</select>
+<select id = "genderFilter">
+  <option value = "e">Select Gender</option>
+  <option value = "m">Male</option>
+  <option value = "f">Female</option>
+</select> </p>
+<p><button id="search">Search</button> </p>
+<!-- </form> -->
+<form action ="{% url 'logout' %}" enctype="multipart/form-data">
+  <p><input  style="height:50px;width:200px" type = "submit" value = "Logout"> </p>
+</form>
+</body>
 </html>

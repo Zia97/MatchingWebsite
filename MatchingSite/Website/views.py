@@ -4,7 +4,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from .forms import RegisterForm
-from .models import UserProfile, Hobby
+from .models import *
 from django.template import loader
 from django.http import *
 from django.shortcuts import render_to_response
@@ -78,10 +78,8 @@ def allUsers(request):
     currresult = []
     newres = {}
     usersdict = {}
-    agesDict = {}
     ageFilt = request.GET['ageFilt']
     genderFilt = request.GET['genderFilt']
-    agesDict = getAge(UserProfile.objects.all().exclude(username=request.user))
 
     if request.method == 'GET':
         currentUser = UserProfile.objects.all().filter(username=request.user)
@@ -131,18 +129,6 @@ def allUsers(request):
 
     return JsonResponse(finallist, safe=False)
 
-def getAge(users):
-    dateDict = {}
-    agesDict = {}
-    resultsJson = [UserProfile.as_json() for UserProfile in users]
-    counter = 0;
-    for user in resultsJson:
-        dateDict[counter] = user.get('dob')
-        today = date.today()
-        agesDict[counter] = today.year - dateDict[counter].year - ((today.month, today.day) < (dateDict[counter].month, dateDict[counter].day))
-        counter = counter + 1
-    return agesDict;
-
 def filterAge(request, val):
     current = dt.now()
     if val == "0":
@@ -173,3 +159,14 @@ def filterAge(request, val):
         max_date = date(current.year - int(119), current.month, current.day)
         filteredUsers = UserProfile.objects.filter(dob__gte=max_date, dob__lte=min_date).exclude(username=request.user)
         return filteredUsers
+
+def like(request):
+    userLiked = UserProfile.objects.get(username=request.POST['user'])
+    currentUser = UserProfile.objects.get(username=request.user)
+    new_like, created = Like.objects.get_or_create(user=currentUser, likedUser=userLiked)
+    if created:
+        userProf = UserProfile.objects.get(username=request.POST['user'])
+        numLikes = userProf.liked.all().count()
+        return HttpResponse(numLikes)
+    else:
+        return HttpResponse("Already Liked")

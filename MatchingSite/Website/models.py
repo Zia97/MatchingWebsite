@@ -10,8 +10,6 @@ class Hobby(models.Model):
     def as_json(self):
         return {'name': self.name}
 
-
-
 class UserProfile(models.Model):
     first_name = models.CharField(max_length=200)
     last_name = models.CharField(max_length=200)
@@ -22,10 +20,8 @@ class UserProfile(models.Model):
     hobUser = models.ManyToManyField(Hobby)
     image = models.ImageField(upload_to='PicFolder/')
 
-
     def __str__(self):
         return self.username
-
 
     def as_json(self):
         return dict(
@@ -36,5 +32,10 @@ class UserProfile(models.Model):
                 gender=self.gender,
                 dob=self.dob,
                 image=self.image.url,
+                likeCount=self.liked.all().count(),
                 hobUser=[h.as_json() for h in self.hobUser.all()],
                 )
+
+class Like(models.Model):
+    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name="likes") #logged in user
+    likedUser = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name="liked") #user they liked
