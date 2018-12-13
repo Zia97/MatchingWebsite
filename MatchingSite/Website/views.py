@@ -10,6 +10,7 @@ from django.http import *
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 import socket
+from datetime import date
 
 def index(request):
     response = redirect('/accounts/login/')
@@ -110,7 +111,10 @@ def allUsers(request):
     currresult = []
     newres = {}
     usersdict = {}
-
+    agesDict = {}
+    ageFilt = request.GET['ageFilt']
+    genderFilt = request.GET['genderFilt']
+    agesDict = getAge(UserProfile.objects.all().exclude(username=request.user))
     if request.method == 'GET':
         currentUser = UserProfile.objects.all().filter(username=request.user)
         currentUserJson = [UserProfile.as_json() for UserProfile in currentUser]
@@ -121,9 +125,14 @@ def allUsers(request):
                 v = list(entry.values())
                 {names[i]:v[i] for i in range(len(names))}
                 currresult.append(v[0])
-                
-        queryset = UserProfile.objects.filter(gender=request.GET['genderFilt']).exclude(username=request.user)
-        users = queryset.filter()
+        if genderFilt == 'e':
+            users = filterAge(agesDict, ageFilt)
+        elif genderFilt == 'm':
+            queryset = UserProfile.objects.filter(gender=genderFilt).exclude(username=request.user)
+            users = queryset.filter()
+        else:
+            queryset = UserProfile.objects.filter(gender=genderFilt).exclude(username=request.user)
+            users = queryset.filter()
 
         resultsJson = [UserProfile.as_json() for UserProfile in users]
         counter =0
@@ -155,7 +164,23 @@ def allUsers(request):
         for num in mylist:
             finallist.append(usersdict[num])
 
-        print(type(finallist))
-        print(finallist)
-
     return JsonResponse(finallist, safe=False)
+
+def getAge(users):
+    dateDict = {}
+    agesDict = {}
+    resultsJson = [UserProfile.as_json() for UserProfile in users]
+    counter = 0;
+    for user in resultsJson:
+        dateDict[counter] = user.get('dob')
+        today = date.today()
+        agesDict[counter] = today.year - dateDict[counter].year - ((today.month, today.day) < (dateDict[counter].month, dateDict[counter].day))
+        counter = counter + 1
+    return agesDict;
+
+def filterAge(agesDict, val):
+    if val == 0:
+        return UserProfile.objects.all().exclude(username=request.user)
+    elif val == 1:
+        queryset = UserProfile.objects.filter(dob=genderFilt).exclude(username=request.user)
+        users = queryset.filter()
