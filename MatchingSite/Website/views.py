@@ -16,7 +16,6 @@ def index(request):
     response = redirect('/accounts/login/')
     return response
 
-
 def register(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST, request.FILES)
@@ -70,38 +69,6 @@ def users(request):
         userJson = userProfile.as_json()
     return JsonResponse(userJson)
 
-# def allUsers(request):
-#     currentUser = UserProfile.objects.get(username=request.user)
-#     queryset = UserProfile.objects.filter(gender=request.GET['genderFilt']).exclude(username=request.user)
-#     restUsers = queryset.filter()
-#     count = 0;
-#     pos = [0];
-#     usersArr = [""];
-#     i = 0;
-#     for rUser in restUsers:
-#         usersArr[i] = rUser.id
-#         count = count + 1;
-#         for cUser in currentUser.hobUser.all():
-#             for user in rUser.hobUser.all():
-#                 if(cUser == user):
-#                     pos[i] = pos[i] + 1;
-#                 else:
-#                     pos[i] = pos[i] + 0;
-#         if(count != len(restUsers)): #gone through already
-#             i = i + 1;
-#             pos.append(0)
-#             usersArr.append("")
-#
-#     pos, usersArr = zip(*sorted(zip(pos, usersArr), reverse=True))
-#     pos, usersArr = (list(t) for t in zip(*sorted(zip(pos, usersArr),reverse=True)))
-#
-#     rankedUsers = []
-#     for selectedUser in usersArr:
-#         rankedUsers.append(UserProfile.objects.get(id=selectedUser))
-#
-#     resultsJson = [UserProfile.as_json() for UserProfile in rankedUsers]
-#     return JsonResponse(resultsJson, safe=False)
-
 def sorter(data):
     return sorted(data.items(), key=lambda kv: kv[1], reverse=True)
 
@@ -127,7 +94,6 @@ def allUsers(request):
                 {names[i]:v[i] for i in range(len(names))}
                 currresult.append(v[0])
         if genderFilt == 'e':
-            print("hello")
             queryset = filterAge(request, ageFilt)
         else:
             users = filterAge(request, ageFilt)
@@ -179,8 +145,6 @@ def getAge(users):
 
 def filterAge(request, val):
     current = dt.now()
-    print("gay")
-    print(val)
     if val == "0":
         print(UserProfile.objects.all().exclude(username=request.user))
         return UserProfile.objects.all().exclude(username=request.user)
@@ -205,7 +169,6 @@ def filterAge(request, val):
         filteredUsers = UserProfile.objects.filter(dob__gte=max_date, dob__lte=min_date).exclude(username=request.user)
         return filteredUsers
     else:
-        print("no")
         min_date = date(current.year - int(61), current.month, current.day)
         max_date = date(current.year - int(119), current.month, current.day)
         filteredUsers = UserProfile.objects.filter(dob__gte=max_date, dob__lte=min_date).exclude(username=request.user)
