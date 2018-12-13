@@ -10,7 +10,7 @@ from django.http import *
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 import socket
-from datetime import date
+from datetime import date, datetime as dt
 
 def index(request):
     response = redirect('/accounts/login/')
@@ -115,6 +115,7 @@ def allUsers(request):
     ageFilt = request.GET['ageFilt']
     genderFilt = request.GET['genderFilt']
     agesDict = getAge(UserProfile.objects.all().exclude(username=request.user))
+
     if request.method == 'GET':
         currentUser = UserProfile.objects.all().filter(username=request.user)
         currentUserJson = [UserProfile.as_json() for UserProfile in currentUser]
@@ -126,15 +127,13 @@ def allUsers(request):
                 {names[i]:v[i] for i in range(len(names))}
                 currresult.append(v[0])
         if genderFilt == 'e':
-            users = filterAge(agesDict, ageFilt)
-        elif genderFilt == 'm':
-            queryset = UserProfile.objects.filter(gender=genderFilt).exclude(username=request.user)
-            users = queryset.filter()
+            print("hello")
+            queryset = filterAge(request, ageFilt)
         else:
-            queryset = UserProfile.objects.filter(gender=genderFilt).exclude(username=request.user)
-            users = queryset.filter()
+            users = filterAge(request, ageFilt)
+            queryset = users.filter(gender=genderFilt).exclude(username=request.user)
 
-        resultsJson = [UserProfile.as_json() for UserProfile in users]
+        resultsJson = [UserProfile.as_json() for UserProfile in queryset]
         counter =0
         for user in resultsJson:
             tempresult = []
@@ -178,9 +177,36 @@ def getAge(users):
         counter = counter + 1
     return agesDict;
 
-def filterAge(agesDict, val):
-    if val == 0:
+def filterAge(request, val):
+    current = dt.now()
+    print("gay")
+    print(val)
+    if val == "0":
+        print(UserProfile.objects.all().exclude(username=request.user))
         return UserProfile.objects.all().exclude(username=request.user)
-    elif val == 1:
-        queryset = UserProfile.objects.filter(dob=genderFilt).exclude(username=request.user)
-        users = queryset.filter()
+    elif val == "1":
+        min_date = date(current.year - int(18), current.month, current.day)
+        max_date = date(current.year - int(30), current.month, current.day)
+        filteredUsers = UserProfile.objects.filter(dob__gte=max_date, dob__lte=min_date).exclude(username=request.user)
+        return filteredUsers
+    elif val == "2":
+        min_date = date(current.year - int(31), current.month, current.day)
+        max_date = date(current.year - int(40), current.month, current.day)
+        filteredUsers = UserProfile.objects.filter(dob__gte=max_date, dob__lte=min_date).exclude(username=request.user)
+        return filteredUsers
+    elif val == "3":
+        min_date = date(current.year - int(41), current.month, current.day)
+        max_date = date(current.year - int(50), current.month, current.day)
+        filteredUsers = UserProfile.objects.filter(dob__gte=max_date, dob__lte=min_date).exclude(username=request.user)
+        return filteredUsers
+    elif val == "4":
+        min_date = date(current.year - int(51), current.month, current.day)
+        max_date = date(current.year - int(60), current.month, current.day)
+        filteredUsers = UserProfile.objects.filter(dob__gte=max_date, dob__lte=min_date).exclude(username=request.user)
+        return filteredUsers
+    else:
+        print("no")
+        min_date = date(current.year - int(61), current.month, current.day)
+        max_date = date(current.year - int(119), current.month, current.day)
+        filteredUsers = UserProfile.objects.filter(dob__gte=max_date, dob__lte=min_date).exclude(username=request.user)
+        return filteredUsers
