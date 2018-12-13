@@ -11,6 +11,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 import socket
 from datetime import date, datetime as dt
+from django.core.mail import EmailMessage
 
 def index(request):
     response = redirect('/accounts/login/')
@@ -167,6 +168,8 @@ def like(request):
     if created:
         userProf = UserProfile.objects.get(username=request.POST['user'])
         numLikes = userProf.liked.all().count()
+        email = EmailMessage('MatchingSite', 'You have a new like!', 'currentUser.email', [userLiked.email])
+        email.send()
         return HttpResponse(numLikes)
     else:
         return HttpResponse("Already Liked")
