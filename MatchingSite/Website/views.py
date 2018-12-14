@@ -23,6 +23,14 @@ def register(request):
         print(form.errors)
         if form.is_valid():
             form.image = request.FILES['image']
+            _password1 = request.POST['password1']
+            _password2 = request.POST['password2']
+            if _password1 != _password2:
+                context = {
+                    'form' : form,
+                    'invalid' : "true"
+                }
+                return render(request, 'registration/register.html', context)
             form.save()
             _first_name = form.cleaned_data['first_name']
             _last_name = form.cleaned_data['last_name']
@@ -34,8 +42,6 @@ def register(request):
             _hobbies = form.cleaned_data.get('hobbies')
             for h in _hobbies:
                 print(h)
-
-
             _password = form.cleaned_data['password1']
 
             user = authenticate(username=_username, password=_password)
@@ -52,7 +58,9 @@ def register(request):
 
             return redirect('index')
         else:
-            print(form.errors)
+            if UserProfile.objects.filter(username=request.POST['username']).exists() or (request.POST['email'] and UserProfile.objects.filter(email=request.POST['email']).exclude(username=request.POST['username']).exists()):
+                context = {'form' : form}
+                return render(request, 'registration/register.html', context)
     else:
         form = RegisterForm()
 

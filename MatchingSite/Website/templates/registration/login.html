@@ -27,16 +27,23 @@
   <p> Cannot access that page </p>
   {% endif %}
 
-<div>
-  <h1>Matching Site</h1>
-</div>
-<div class="container">
-  <div text-align:centerS>
-    <div class="vertical-center">
+<div class="loginContainer">
+  <h1 style = "text-align:center">Matching Site</h1>
+  <div text-align:center>
+    <div class="vertical-center ">
       <form method ="post" action="{% url 'login' %}">
         {% csrf_token %}
-
-        <table align="center">
+        <div class="form-group">
+             {% for field in form %}
+                     <input class="form-control" placeholder="{{ field.html_name }}" id="{{ field.id_for_label }}" name="{{ field.html_name }}" type="{{ field.field.widget.input_type }}" />
+                     {{ field.errors }}
+             {% endfor %}
+             <br>
+             <p><input class="form-control" style="height:50px;width:200px" type = "submit" value = "Login"> </p>
+             <input type ="hidden" name = "next" value = "{{ next }}">
+             <a href="http://localhost:8000/register"> <p style="color:black"> No account? Click here to register </p></a>
+         </div>
+        <!-- <table align="center">
           <tr>
             <td align="right">Username</td>
             <td><p>{{form.username}}</p></td>
@@ -45,12 +52,8 @@
             <td align="right">Password</td>
             <td align="left"><p>{{form.password}}</p></td>
           </tr>
-        </table>
-
-        <p><input class="form-control" style="height:50px;width:200px" type = "submit" value = "Login"> </p>
-        <input type ="hidden" name = "next" value = "{{ next }}">
+        </table> -->
       </form>
-      <a href="http://localhost:8000/register"> No account? Click here to register</a>
     </div>
   </div>
 </div>

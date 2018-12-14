@@ -49,8 +49,14 @@
                 <h3 id = "mainTitle">Register</h3>
                     <form class="" method = "post" action = "{% url 'register' %}" enctype="multipart/form-data">
                       {% csrf_token %}
+                      {% if invalid %}
+                        Your passwords did not match
+                      {% endif %}
+                      {% if form.errors %}
+                      <p> There are errors in the form!</p>
+                      {% endif %}
                       {{ form.as_p }}
-                      <input type ="submit" value = "Register">
+                      <input style="color:black;" class="form-control btn btn-secondary" type ="submit" value = "Register">
                     </form>
                 </div>
             </div>

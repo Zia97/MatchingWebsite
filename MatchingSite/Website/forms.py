@@ -80,8 +80,8 @@ class RegisterForm(UserCreationForm):
         choices=HOBBY_CHOICES,
     )
 
-    def is_valid(self):
-        return 1
+    # def is_valid(self):
+    #     return 1
 
 
     class DateInput(forms.DateInput):
@@ -102,3 +102,10 @@ class RegisterForm(UserCreationForm):
         if commit:
             user.save()
         return user
+
+    def clean_email(self):
+        email = self.cleaned_data["email"]
+        username = self.cleaned_data["username"]
+        if email and User.objects.filter(email=email).exclude(username=username).exists():
+            raise forms.ValidationError('Email address must be unique')
+        return email

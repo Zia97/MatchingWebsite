@@ -104,9 +104,8 @@
                 addHobby(isCurr, data[k].hobUser[i].name, data[k].username)
               }
               $('#div' + data[k].username).append("<p id = likeCount" + data[k].username +">" + "Like Count: " + data[k].likeCount + "</p>")
-              $('#div' + data[k].username).append('<button id = ' + data[k].username + ' type="submit" class="likeBut btn btn-primary">Like</button>')
+              $('#div' + data[k].username).append('<button id = ' + data[k].username + ' type="submit" class="likeBut btn btn-secondary">Like</button><hr style="width:100%;text-align:center;">')
             }
-            $('.userId').after("<p id='opacity'>Test</p>")
             $('.likeBut').click(likeProfile)
           },
           failure: function(data) {
