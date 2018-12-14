@@ -8,16 +8,59 @@ import datetime
 
 
 class RegisterForm(UserCreationForm):
-    username = forms.CharField(label="Your Username")
-    password1 = forms.CharField(label="Your Password", widget=forms.PasswordInput)
-    password2 = forms.CharField(label="Repeat Your Password", widget=forms.PasswordInput)
-    image = forms.FileField(widget=forms.FileInput(attrs={'id':'image'}))
-    sex = forms.ChoiceField(choices=[("m","Male"),("f","Female")])
-    dayRange = range(1,32)
-    birthdate = forms.DateField(widget=SelectDateWidget(years=range(1900, 2010)))
-    email = forms.EmailField(label = "Email Address")
-    first_name = forms.CharField(label = "Name")
-    last_name = forms.CharField(label = "Surname")
+    username = forms.CharField(label="Your Username", widget = forms.TextInput(
+        attrs={
+            'class' : "form-control",
+            'placeholder' : 'Username'
+        }
+    ))
+    password1 = forms.CharField(label="Your Password", widget=forms.PasswordInput(
+        attrs={
+            'class' : "form-control",
+            'placeholder' : 'Password'
+        }
+    ))
+    password2 = forms.CharField(label="Repeat Your Password", widget=forms.PasswordInput(
+        attrs={
+            'class' : "form-control",
+            'placeholder' : 'Repeat Password'
+        }
+    ))
+    image = forms.FileField(widget=forms.FileInput(
+        attrs={
+            'class' : "form-control",
+            'id':'image',
+        }
+    ))
+    sex = forms.ChoiceField(choices=[("Male","Male"),("Female","Female")], widget=forms.Select(
+        attrs={
+            'class' : "form-control"
+        }
+    ))
+    birthdate = forms.DateField(widget=SelectDateWidget(
+        attrs={
+            'class' : "form-control"
+        },
+        years=range(1900, 2010)
+    ))
+    email = forms.EmailField(label = "Email Address", widget=forms.TextInput(
+        attrs={
+            'class' : "form-control",
+            'placeholder' : 'Email'
+        }
+    ))
+    first_name = forms.CharField(label = "Name", widget=forms.TextInput(
+        attrs={
+            'class' : "form-control",
+            'placeholder' : 'First Name'
+        }
+    ))
+    last_name = forms.CharField(label = "Surname", widget=forms.TextInput(
+        attrs={
+            'class' : "form-control",
+            'placeholder' : 'Last Name'
+        }
+    ))
     HOBBY_CHOICES = (
         ('Running', 'Running'),
         ('Cycling', 'Cycling'),

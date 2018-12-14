@@ -1,3 +1,4 @@
+{% load staticfiles %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,13 +7,58 @@
   <script type='text/javascript' src='http://code.jquery.com/jquery-1.8.2.js'></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+  <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+
+  <!-- Website CSS style -->
+  <link href="{% static 'css/registration.css' %}" type="text/css" rel="stylesheet">
+
+  <!-- Website Font style -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
+  <!-- <link rel="stylesheet" href="style.css"> -->
+  <!-- Google Fonts -->
+  <link href='https://fonts.googleapis.com/css?family=Passion+One' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Oxygen' rel='stylesheet' type='text/css'>
 
 </head>
 
 <body>
-  <h1> Home Page </h1>
-  {% if user.is_authenticated %}
-
+{% if user.is_authenticated %}
+  <nav class="navbar navbar-dark bg-dark">
+    <h1 id = "homePage" class="col-sm-8 col-sm-offset-2"> Home Page </h1>
+    <div class="upload-btn-wrapper col-sm-2">
+    <form action ="{% url 'logout' %}" enctype="multipart/form-data">
+      <input class="btn btn-secondary" type = "submit" value = "Logout">
+    </form>
+  </div>
+</nav>
+  <div class="container col-sm-6 col-sm-offset-3" id="cont">
+    <div id="userInfo" class="col-sm-12" style="font-weight:bold">
+      {% else %}
+      <h2> You are not logged in.</h2>
+      {% endif %}
+      <div class="col-sm-6">
+      <select id = "ageFilter" class="form-control">
+        <option value = "0">Select Age Range</option>
+        <option value = "1">18-30</option>
+        <option value = "2">31-40</option>
+        <option value = "3">41-50</option>
+        <option value = "4">51-60</option>
+        <option value = "5">61+</option>
+      </select>
+    </div>
+    <div class="col-sm-6">
+      <select id = "genderFilter" class="form-control">
+        <option value = "e">Select Gender</option>
+        <option value = "Male">Male</option>
+        <option value = "Female">Female</option>
+      </select>
+    </div>
+      <p><button id="search" class="btn btn-secondary col-sm-2 col-sm-offset-5">Search</button> </p>
+    </div>
+    <div id="matchInfo" style="font-weight:bold"> </div>
+  </div>
   <script type="text/javascript">
   $(document).ready(function() {
     //THIS AJAX REQUEST GETS ALL THE USER DETAILS
@@ -22,11 +68,12 @@
         type: 'get',
         success: function(data) {
           isCurr = true;
-          addEntry(isCurr, data.username ,data.first_name, data.last_name, data.dob, data.email, data.gender, data.image, data.likeCount);
+          addEntry(isCurr, data.username ,data.first_name, data.last_name, data.dob, data.email, data.gender, data.image);
           for (j=0; j<data.hobUser.length; j++)
           {
-            addHobby(isCurr, data.hobUser[j].name + "<br>")
+            addHobby(isCurr, data.hobUser[j].name, data.username)
           }
+          $('#div' + data.username).append("<p id = likeCount" + data.username +">" + "Like Count: " + data.likeCount + "</p>")
         },
         failure: function(data) {
           alert('error');
@@ -51,15 +98,15 @@
             $('#matchInfo').empty();
             for(k=0; k<data.length; k++)
             {
-              addEntry(isCurr, data[k].username, data[k].first_name, data[k].last_name, data[k].dob, data[k].email, data[k].gender, data[k].image, data[k].likeCount);
+              addEntry(isCurr, data[k].username, data[k].first_name, data[k].last_name, data[k].dob, data[k].email, data[k].gender, data[k].image);
               for (i=0; i<data[k].hobUser.length; i++)
               {
-                addHobby(isCurr, data[k].hobUser[i].name + "<br>")
+                addHobby(isCurr, data[k].hobUser[i].name, data[k].username)
               }
+              $('#div' + data[k].username).append("<p id = likeCount" + data[k].username +">" + "Like Count: " + data[k].likeCount + "</p>")
+              $('#div' + data[k].username).append('<button id = ' + data[k].username + ' type="submit" class="likeBut btn btn-primary">Like</button>')
             }
-            $('#userInfo').append($("#ageFilter"))
-            $('#userInfo').append($("#genderFilter"))
-            $('#userInfo').append($("#search"))
+            $('.userId').after("<p id='opacity'>Test</p>")
             $('.likeBut').click(likeProfile)
           },
           failure: function(data) {
@@ -100,69 +147,43 @@ function likeProfile()
 function addEntry(isCurr, username, first_name, last_name, dob, email, gender, image, likeCount) {
   if(isCurr==true)
   {
-    $('#userInfo').append('<br/>')
     var img = document.createElement('img');
     img.setAttribute('src', image);
-    img.setAttribute('height', '10%');
-    img.setAttribute('width', '10%');
-    $('#userInfo').append(document.getElementsByTagName('body')[0].appendChild(img))
-    $('#userInfo').append('<div id="userId' + '" ><h3> <ul><li>' + username + "<br/ >" + first_name + " " + last_name + "<br/ >" + dob + "<br/ >" +email + "<br/ >" + gender)
-    $('#userInfo').append("<p id = likeCount" + username +">" + likeCount + "</p>")
+    img.setAttribute('height', '200px');
+    img.setAttribute('width', '200px');
+    //$('#userInfo').append(document.getElementsByTagName('body')[0].appendChild(img))
+    $('#cont').prepend('<div class="userId col-sm-12 rounded" id = "div' + username + '"><h3>' + first_name + " " + last_name + "<br/ >" + dob + "<br/ >" +email + "<br/ >" + gender + "</div>")
+    $('#div' + username).prepend(img)
+    $('#div' + username).prepend('<br>')
   }
   else
   {
-    $('#matchInfo').append('<br/>')
     var img = document.createElement('img');
     img.setAttribute('src', image);
-    img.setAttribute('height', '10%');
-    img.setAttribute('width', '10%');
-    $('#matchInfo').append(document.getElementsByTagName('body')[0].appendChild(img))
-    $('#matchInfo').append('<div id="userId' + '" ><h3> <ul><li>' + username + "<br/ >" + first_name + " " + last_name + "<br/ >" + dob + "<br/ >" +email + "<br/ >" + gender)
-    $('#matchInfo').append('<button id = ' + username + ' type="submit" class="likeBut">Like</button>')
-    $('#matchInfo').append("<p id = likeCount" + username +">" + likeCount + "</p>")
+    img.setAttribute('height', '200px');
+    img.setAttribute('width', '200px');
+    //$('#matchInfo').append(document.getElementsByTagName('body')[0].appendChild(img))
+    $('#matchInfo').append('<div class="userId col-sm-12 rounded" id = "div' + username + '"><h3>' + first_name + " " + last_name + "<br/ >" + dob + "<br/ >" +email + "<br/ >" + gender + "</div>")
+    $('#div' + username).prepend(img)
+    $('#div' + username).prepend('<br>')
   }
 }
 </script>
 
 <script type="text/javascript">
-function addHobby(isCurr, name) {
+function addHobby(isCurr, name, user) {
   if(isCurr==true)
   {
-    $('#userInfo').append('<br/>')
-    $('#userInfo').append(name)
+    $('#div' + user).append('<p>' + name + '</p>')
   }
   else
   {
-    $('#matchInfo').append('<br/>')
-    $('#matchInfo').append(name)
+    $('#div' + user).append('<p>' + name + '</p>')
   }
 }
 </script>
 
-<span id="userInfo" style="font-weight:bold">User Info</span>
-<span id="matchInfo" style="font-weight:bold"> </span>
-{% else %}
-<h2> You are not logged in.</h2>
-{% endif %}
-<!-- <form role='form' method='post'>
-{% csrf_token %} -->
-<p><select id = "ageFilter">
-  <option value = "0">Select Age Range</option>
-  <option value = "1">18-30</option>
-  <option value = "2">31-40</option>
-  <option value = "3">41-50</option>
-  <option value = "4">51-60</option>
-  <option value = "5">61+</option>
-</select>
-<select id = "genderFilter">
-  <option value = "e">Select Gender</option>
-  <option value = "m">Male</option>
-  <option value = "f">Female</option>
-</select> </p>
-<p><button id="search">Search</button> </p>
-<!-- </form> -->
-<form action ="{% url 'logout' %}" enctype="multipart/form-data">
-  <p><input  style="height:50px;width:200px" type = "submit" value = "Logout"> </p>
-</form>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
 </body>
 </html>

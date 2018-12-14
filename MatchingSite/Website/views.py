@@ -51,6 +51,8 @@ def register(request):
             newUserProfile.save()
 
             return redirect('index')
+        else:
+            print(form.errors)
     else:
         form = RegisterForm()
 
