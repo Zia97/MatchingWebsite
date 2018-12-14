@@ -178,7 +178,8 @@ def filterAge(request, val):
         dob__gte=max_date, dob__lte=min_date).exclude(username=request.user)
     return filteredUsers
 
-
+#This method checks if a user has already liked another user
+#If they have not, the liked users' like counter is incremented and an email is sent to them
 def like(request):
     userLiked = UserProfile.objects.get(username=request.POST['user'])
     currentUser = UserProfile.objects.get(username=request.user)

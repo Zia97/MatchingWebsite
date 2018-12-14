@@ -14,6 +14,7 @@ class Hobby(models.Model):
 
 
 #The user model which has a foreign key linked to the hobby model
+#ManyToManyField with Hobby so that users can have many hobbies
 class UserProfile(models.Model):
     first_name = models.CharField(max_length=200)
     last_name = models.CharField(max_length=200)

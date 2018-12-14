@@ -10,6 +10,7 @@ import datetime
 class RegisterForm(UserCreationForm):
 
     # Implementing and overiding the UserCreationForm to add our own fields
+    #Bootstrap added as attributes
     username = forms.CharField(label="Your Username", widget=forms.TextInput(
         attrs={
             'class': "form-control",
