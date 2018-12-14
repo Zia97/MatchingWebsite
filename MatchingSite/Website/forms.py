@@ -2,69 +2,71 @@ from django.contrib.auth.forms import UserCreationForm
 from django import forms
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.forms.widgets import DateInput,SelectDateWidget
+from django.forms.widgets import DateInput, SelectDateWidget
 from django.forms.widgets import Select, Widget
 import datetime
 
 
 class RegisterForm(UserCreationForm):
-    username = forms.CharField(label="Your Username", widget = forms.TextInput(
+
+    # Implementing and overiding the UserCreationForm to add our own fields
+    username = forms.CharField(label="Your Username", widget=forms.TextInput(
         attrs={
-            'class' : "form-control",
-            'placeholder' : 'Username'
+            'class': "form-control",
+            'placeholder': 'Username'
         }
     ))
     password1 = forms.CharField(label="Your Password", widget=forms.PasswordInput(
         attrs={
-            'class' : "form-control",
-            'placeholder' : 'Password'
+            'class': "form-control",
+            'placeholder': 'Password'
         }
     ))
     password2 = forms.CharField(label="Repeat Your Password", widget=forms.PasswordInput(
         attrs={
-            'class' : "form-control",
-            'placeholder' : 'Repeat Password'
+            'class': "form-control",
+            'placeholder': 'Repeat Password'
         }
     ))
     image = forms.FileField(widget=forms.FileInput(
         attrs={
-            'class' : "form-control",
-            'id':'image',
+            'class': "form-control",
+            'id': 'image',
         }
     ))
-    sex = forms.ChoiceField(choices=[("Male","Male"),("Female","Female")], widget=forms.Select(
+    sex = forms.ChoiceField(choices=[("Male", "Male"), ("Female", "Female")], widget=forms.Select(
         attrs={
-            'class' : "form-control"
+            'class': "form-control"
         }
     ))
     birthdate = forms.DateField(widget=SelectDateWidget(
         attrs={
-            'class' : "form-control"
+            'class': "form-control"
         },
-        years=range(1900, 2010)
+        years=range(1900, 2018)
     ))
-    email = forms.EmailField(label = "Email Address", widget=forms.TextInput(
+    email = forms.EmailField(label="Email Address", widget=forms.TextInput(
         attrs={
-            'class' : "form-control",
-            'placeholder' : 'Email'
+            'class': "form-control",
+            'placeholder': 'Email'
         }
     ))
-    first_name = forms.CharField(label = "Name", widget=forms.TextInput(
+    first_name = forms.CharField(label="Name", widget=forms.TextInput(
         attrs={
-            'class' : "form-control",
-            'placeholder' : 'First Name'
+            'class': "form-control",
+            'placeholder': 'First Name'
         }
     ))
-    last_name = forms.CharField(label = "Surname", widget=forms.TextInput(
+    last_name = forms.CharField(label="Surname", widget=forms.TextInput(
         attrs={
-            'class' : "form-control",
-            'placeholder' : 'Last Name'
+            'class': "form-control",
+            'placeholder': 'Last Name'
         }
     ))
     HOBBY_CHOICES = (
         ('Running', 'Running'),
         ('Cycling', 'Cycling'),
-        ('Gaming','Gaming'),
+        ('Gaming', 'Gaming'),
         ('Music', 'Music'),
         ('Hiking', 'Hiking'),
         ('Painting', 'Painting'),
@@ -80,15 +82,9 @@ class RegisterForm(UserCreationForm):
         choices=HOBBY_CHOICES,
     )
 
-    # def is_valid(self):
-    #     return 1
-
-
-    class DateInput(forms.DateInput):
-        input_type = 'date'
-
+    # Saving the user provided all the fields are verified
     def save(self, commit=True):
-        user=super(UserCreationForm, self).save(commit=True)
+        user = super(UserCreationForm, self).save(commit=True)
         user.set_password(self.clean_password2())
         user.username = self.cleaned_data["username"]
         user.email = self.cleaned_data["email"]
@@ -103,6 +99,7 @@ class RegisterForm(UserCreationForm):
             user.save()
         return user
 
+    # Defined our own email validation and overriden the standard verification
     def clean_email(self):
         email = self.cleaned_data["email"]
         username = self.cleaned_data["username"]

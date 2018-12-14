@@ -1,6 +1,7 @@
 {% load staticfiles %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
@@ -11,57 +12,48 @@
 
   <!-- Website Font style -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
-  <!-- <link rel="stylesheet" href="style.css"> -->
   <!-- Google Fonts -->
   <link href='https://fonts.googleapis.com/css?family=Passion+One' rel='stylesheet' type='text/css'>
   <link href='https://fonts.googleapis.com/css?family=Oxygen' rel='stylesheet' type='text/css'>
   <title> Welcome to Matching Site </title>
 </head>
+
 <body>
 
   {% if form.errors %}
-  <p> There's somethhing wrong with what you entered </p>
+  <p> There's something wrong with what you entered </p>
   {% endif %}
 
   {% if next %}
   <p> Cannot access that page </p>
   {% endif %}
 
-<div class="loginContainer">
-  <h1 style = "text-align:center">Matching Site</h1>
-  <div text-align:center>
-    <div class="vertical-center ">
-      <form method ="post" action="{% url 'login' %}">
-        {% csrf_token %}
-        <div class="form-group">
-             {% for field in form %}
-                     <input class="form-control" placeholder="{{ field.html_name }}" id="{{ field.id_for_label }}" name="{{ field.html_name }}" type="{{ field.field.widget.input_type }}" />
-                     {{ field.errors }}
-             {% endfor %}
-             <br>
-             <p><input class="form-control" style="height:50px;width:200px" type = "submit" value = "Login"> </p>
-             <input type ="hidden" name = "next" value = "{{ next }}">
-             <a href="http://localhost:8000/register"> <p style="color:black"> No account? Click here to register </p></a>
-         </div>
-        <!-- <table align="center">
-          <tr>
-            <td align="right">Username</td>
-            <td><p>{{form.username}}</p></td>
-          </tr>
-          <tr>
-            <td align="right">Password</td>
-            <td align="left"><p>{{form.password}}</p></td>
-          </tr>
-        </table> -->
-      </form>
+  <div class="loginContainer">
+    <h1 style="text-align:center">Matching Site</h1>
+    <div text-align:center>
+      <div class="vertical-center ">
+        <form method="post" action="{% url 'login' %}">
+          {% csrf_token %}
+          <div class="form-group">
+            {% for field in form %}
+            <input class="form-control" placeholder="{{ field.html_name }}" id="{{ field.id_for_label }}" name="{{ field.html_name }}" type="{{ field.field.widget.input_type }}" />
+            {{ field.errors }}
+            {% endfor %}
+            <br>
+            <p><input class="form-control" style="height:50px;width:200px" type="submit" value="Login"> </p>
+            <input type="hidden" name="next" value="{{ next }}">
+            <a href="http://localhost:8000/register">
+              <p style="color:black"> No account? Click here to register </p>
+            </a>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> -->
-<!-- Include all compiled plugins (below), or include individual files as needed -->
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
 </body>
+
 </html>
